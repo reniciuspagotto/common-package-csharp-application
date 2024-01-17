@@ -44,5 +44,5 @@ jobs:
           echo ${{ env.RELEASE_VERSION1 }}
           echo ${{ env.RELEASE_VERSION2 }}
           echo ${{ env.RELEASE_VERSION3 }}
-          echo ${{  github.ref_name }}
+          echo ${{  github.ref_name }} 
           dotnet nuget push PackageUtils.${{ inputs.version }}.nupkg -s https://nuget.pkg.github.com/reniciuspagotto/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
