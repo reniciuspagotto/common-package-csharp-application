@@ -8,7 +8,7 @@ on:
         description: "Package Version"
   push:
     tags:
-      - 'v*.*.*'
+      - '*.*.*'
 
 jobs:
   build:
