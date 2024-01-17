@@ -2,6 +2,10 @@ name: Build and Deploy
 
 on:
   workflow_dispatch:
+    inputs: 
+      version:
+        required: true
+        description: "Package Version"
 
 env:
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
@@ -31,9 +35,5 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
         
-      - name: Generate Version
-        id: version
-        uses: battila7/get-version-action@v2
-        
       - name: Package
-        run: dotnet pack --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ inputs.version }} --output .
