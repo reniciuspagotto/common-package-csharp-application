@@ -37,3 +37,6 @@ jobs:
         
       - name: Package
         run: dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ inputs.version }} --output .
+        
+      - name: Publish
+        run: dotnet nuget push PackageUtils.${{ inputs.version }}.nupkg -s https://nuget.pkg.github.com/reniciuspagotto/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
