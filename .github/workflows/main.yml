@@ -4,11 +4,6 @@ on:
   push:
     tags:
       - 'v*.*.*'
-  workflow_dispatch:
-    inputs: 
-      version:
-        required: true
-        description: "Package Version"
 
 jobs:
   build:
@@ -28,21 +23,8 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
         
-      - name: Version
-        run: | 
-          echo "RELEASE_VERSION1=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
-          echo "RELEASE_VERSION2=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo "RELEASE_VERSION3=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-        
       - name: Package
-        run: |
-          echo ${{ github.workspace }}
-          echo ${{ env.RELEASE_VERSION1 }}
-          echo ${{ env.RELEASE_VERSION2 }}
-          echo ${{ env.RELEASE_VERSION3 }}
-          echo ${{  github.ref_name }}
-          dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ inputs.version }} --output .
+        run: dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ github.ref_name }} --output .
         
       - name: Publish
-        run: dotnet nuget push PackageUtils.${{ inputs.version }}.nupkg -s https://nuget.pkg.github.com/reniciuspagotto/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
+        run: dotnet nuget push PackageUtils.${{ github.ref_name }}.nupkg -s https://nuget.pkg.github.com/reniciuspagotto/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
