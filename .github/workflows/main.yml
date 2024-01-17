@@ -1,1 +1,39 @@
 name: Build and Deploy
+
+on:
+  workflow_dispatch:
+
+env:
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
+  ARTIFACTORY_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
+
+jobs:
+  build:
+    name: Build Package
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+          
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Set up dependency caching for faster builds
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+            
+      - name: Build
+        run: dotnet build --configuration Release
+        
+      - name: Generate Version
+        id: version
+        uses: battila7/get-version-action@v2
+        
+      - name: Package
+        run: dotnet pack --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
