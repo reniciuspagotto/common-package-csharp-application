@@ -1,11 +1,6 @@
 name: Build and Deploy
 
 on:
-  workflow_dispatch: 
-    inputs: 
-      version:
-        required: true
-        description: "Package Version"
   push:
     tags:
       - '*.*.*'
