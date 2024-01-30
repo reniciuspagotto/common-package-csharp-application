@@ -22,7 +22,12 @@ jobs:
         run: dotnet build --configuration Release
         
       - name: Package
-        run: dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ github.ref_name }} --output .
+        run: >
+          dotnet pack --no-restore --no-build --configuration Release 
+          -p:PackageVersion=${{ github.ref_name }} --output .
         
       - name: Publish
-        run: dotnet nuget push PackageUtils.${{ github.ref_name }}.nupkg -s https://nuget.pkg.github.com/reniciuspagotto/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
+        run: >
+          dotnet nuget push PackageUtils.${{ github.ref_name }}.nupkg 
+          -s https://nuget.pkg.github.com/reniciuspagotto/index.json 
+          -k ${{ secrets.NUGET_AUTH_TOKEN }}
